@@ -1,5 +1,4 @@
 -- 1. Cuantos Post hay - 1050
-
 SELECT * FROM posts;
 
 -- 2. Cuantos Post publicados hay - 543
@@ -8,7 +7,6 @@ SELECT COUNT(post_id) FROM posts WHERE published IS true;
 -- 3. Cual es el Post mas reciente
 -- 544 - nisi commodo officia...2024-05-30 00:29:21.277
 SELECT MAX(post_id) FROM posts LIMIT 1
-
 
 -- 4. Quiero los 10 usuarios con más post, cantidad de posts, id y nombre
 /*
@@ -31,7 +29,6 @@ GROUP BY u.user_id, u.name
 ORDER BY cantidad_post DESC
 LIMIT 10
 
-
 -- 5. Quiero los 5 post con más "Claps" sumando la columna "counter"
 /*
 692	sit excepteur ex ipsum magna fugiat laborum exercitation fugiat
@@ -48,7 +45,6 @@ GROUP BY p.post_id, p.title
 ORDER BY count_claps DESC
 LIMIT 5
 
-
 -- 6. Top 5 de personas que han dado más claps (voto único no acumulado ) *count
 /*
 7	Lillian Hodge
@@ -58,13 +54,12 @@ LIMIT 5
 6	Rose Owen
 */
 
-SELECT COUNT(c.counter) as voto, u.name
+SELECT u.name, COUNT(c.clap_id) as cantidad_post
 FROM users u
 INNER JOIN claps c ON c.user_id = u.user_id
 GROUP BY u.name
-ORDER BY voto DESC
+ORDER BY cantidad_post DESC
 LIMIT 5
-
 
 -- 7. Top 5 personas con votos acumulados (sumar counter)
 /*
@@ -75,20 +70,20 @@ LIMIT 5
 364	Lillian Hodge
 */
 
-SELECT SUM(c.counter) as counter_votos, u.name
+SELECT u.name, SUM(c.counter) as cantidad_votos
 FROM users u
 INNER JOIN claps c ON c.user_id = u.user_id
 GROUP BY u.name
-ORDER BY counter_votos DESC
+ORDER BY cantidad_votos DESC
 LIMIT 5
 
 -- 8. Cuantos usuarios NO tienen listas de favoritos creada
 -- 329
 
-SELECT COUNT(u.user_id) as COUNT
-FROM users u
-LEFT JOIN user_lists ul ON ul.user_id = u.user_id
-WHERE ul.user_list_id IS NULL
+SELECT COUNT(u.*) FROM users u
+LEFT JOIN user_lists l ON l.user_id = u.user_id
+WHERE l.user_id IS NULL
+
 
 -- 9. Quiero el comentario con id
 -- Y en el mismo resultado, quiero sus respuestas (visibles e invisibles)
@@ -100,6 +95,10 @@ WHERE ul.user_list_id IS NULL
 4768	835	1447	nostrud nulla...
 */
 
+SELECT comment_id, comment_parent_id, content FROM comments WHERE comment_parent_id IS NOT NULL
+UNION
+SELECT comment_id, comment_parent_id, content FROM comments WHERE comment_parent_id = comment_id
+ORDER BY comment_id ASC
 
 
 -- ** 10. Avanzado
@@ -110,15 +109,34 @@ WHERE ul.user_list_id IS NULL
 
 -- Salida esperada:
 /*
-"[{""user"" : 1797, ""comment"" : ""tempor mollit aliqua dolore cupidatat dolor tempor""}, {""user"" : 1842, ""comment"" : ""laborum mollit amet aliqua enim eiusmod ut""}, {""user"" : 1447, ""comment"" : ""nostrud nulla duis enim duis reprehenderit laboris voluptate cupidatat""}]"
+"[{""user"" : 1797, ""comment"" : ""tempor mollit aliqua dolore cupidatat dolor tempor""}, 
+{""user"" : 1842, ""comment"" : ""laborum mollit amet aliqua enim eiusmod ut""}, 
+{""user"" : 1447, ""comment"" : ""nostrud nulla duis enim duis reprehenderit laboris voluptate cupidatat""}]"
 */
 
-
-
+SELECT json_agg(json_build_object(
+	'user', user_id,
+	'comment', content
+)) FROM comments
+WHERE comment_parent_id =  1
 
 
 -- ** 11. Avanzado
 -- Listar todos los comentarios principales (no respuestas) 
 -- Y crear una columna adicional "replies" con las respuestas en formato JSON
+
+SELECT
+	c1.comment_id,
+	c1.content,
+	(
+		SELECT json_agg(json_build_object(
+			'user', c2.user_id,
+			'comment', c2.content
+		)) FROM comments c2
+		WHERE c2.comment_parent_id =  c1.comment_id
+	) replies
+FROM comments c1
+WHERE c1.comment_parent_id IS NULL
+
 
 
