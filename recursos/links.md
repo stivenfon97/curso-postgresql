@@ -36,3 +36,6 @@ https://www.postgresql.org/docs/8.3/sql-alterview.html
 
 ### DOC. COMMON TABLE EXPRESSION (CTE)
 https://www.postgresql.org/docs/current/queries-with.html
+
+### DOC. FUNCTIONS
+https://www.postgresql.org/docs/current/sql-createfunction.html
