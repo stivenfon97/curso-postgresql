@@ -32,3 +32,7 @@ https://gemini.google.com/share/d0580ff04728
 
 ### DOC. VISTAS
 https://www.postgresql.org/docs/current/sql-createview.html
+https://www.postgresql.org/docs/8.3/sql-alterview.html
+
+### DOC. COMMON TABLE EXPRESSION (CTE)
+https://www.postgresql.org/docs/current/queries-with.html

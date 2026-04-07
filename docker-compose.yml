@@ -14,7 +14,7 @@ services:
 
   pdAdmin:
     user: root
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     container_name: pgadmin4
     restart: always
     depends_on:
