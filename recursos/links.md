@@ -39,3 +39,9 @@ https://www.postgresql.org/docs/current/queries-with.html
 
 ### DOC. FUNCTIONS
 https://www.postgresql.org/docs/current/sql-createfunction.html
+
+### DOC. CRYPTOGRAPHIC
+https://www.postgresql.org/docs/current/pgcrypto.html
+
+### DOC. CREATE TRIGGER
+https://www.postgresql.org/docs/current/sql-createtrigger.html
